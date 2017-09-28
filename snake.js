@@ -7,7 +7,7 @@ function Snake() {
     var snakeBody = 2;
     this.snakeElements = [];
     this.autoMoveIntevalId = null;
-    this.direction = 'up';
+    this.direction = 'down';
 }
 
 Snake.prototype.autoMove = function () {
@@ -18,7 +18,7 @@ Snake.prototype.autoMove = function () {
 
 Snake.prototype.begin = function () {
     var self = this;
-    
+
     for (var i = 0; i < this.snakeLength; i++) {
         var div = document.createElement('div');
         this.snakeElements.push(div);
@@ -42,7 +42,6 @@ Snake.prototype.begin = function () {
     });
 
     this.autoMoveIntevalId = setInterval(function () {
-        console.log(self.direction);
         if (self.direction === 'right') {
             self.moveRight();
         }
@@ -69,6 +68,10 @@ Snake.prototype.moveRight = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementX + 2 != left.split('%')[0]) {
+        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+            this.dead();
+            return;
+        }
         tail.style.left = firstElementX + 2 + "%";
         tail.style.top = firstElementY + "%";
         this.snakeElements.pop();
@@ -83,12 +86,17 @@ Snake.prototype.moveLeft = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementX - 2 != left.split('%')[0]) {
+        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+            this.dead();
+            return;
+        }
         tail.style.left = firstElementX - 2 + "%";
         tail.style.top = firstElementY + "%";
         this.snakeElements.pop();
         this.snakeElements.unshift(tail);
     }
 };
+
 Snake.prototype.moveUp = function () {
     var top = this.snakeElements[1].style.top;
     var tail = this.tail();
@@ -96,6 +104,10 @@ Snake.prototype.moveUp = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementY - 2 != top.split('%')[0]) {
+        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+            this.dead();
+            return;
+        }
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY - 2 + "%";
         this.snakeElements.pop();
@@ -103,6 +115,7 @@ Snake.prototype.moveUp = function () {
     }
 
 };
+
 Snake.prototype.moveDown = function () {
     var top = this.snakeElements[1].style.top;
     var tail = this.tail();
@@ -110,9 +123,34 @@ Snake.prototype.moveDown = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementY + 2 != top.split('%')[0]) {
+        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+            this.dead();
+            return;
+        }
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY + 2 + "%";
         this.snakeElements.pop();
         this.snakeElements.unshift(tail);
     }
 };
+
+Snake.prototype.checkIfIsInsideBoard = function (leftPos, topPos) {
+    console.log(leftPos, topPos);
+    if (leftPos >= 100
+        ||
+        leftPos < 4
+        ||
+        topPos <= 0
+        ||
+        topPos >= 98
+    ) {
+        return true;
+    }
+    return false; 
+};
+
+Snake.prototype.dead = function (leftPos, topPos) {
+    clearInterval(this.autoMoveIntevalId);
+    console.log('DEAD');
+};
+    
