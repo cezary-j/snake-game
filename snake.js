@@ -53,16 +53,17 @@ Snake.prototype.begin = function () {
         }
     }, this.snakeSpeed);
 
-    this.generateFoodIntevalId = setInterval(function () {
-        var leftFoodPos = Math.floor(Math.random() * 98);
-        var topFoodPos = Math.floor(Math.random() * 98);
+    // this.generateFoodIntevalId = setInterval(function () {
+        // var leftFoodPos = Math.floor(Math.random() * 98);
+        // var topFoodPos = Math.floor(Math.random() * 98);
         // @TODO it must be even
+        var leftFoodPos = 58;
+        var topFoodPos = 50;
 
         var forbiddenPos = false;
 
         // check if food can be here
         self.snakeElements.forEach(function (snakeElement, index) {
-            console.log('Check if food willnot be in sake');
             if (
                 leftFoodPos === parseInt(snakeElement.style.left.replace('%', ''))
                 &&
@@ -88,10 +89,7 @@ Snake.prototype.begin = function () {
         div.style.top = topFoodPos + "%";
         div.style.left = leftFoodPos + "%";
         board.appendChild(div);
-
-        console.log(self.foodElements);
-
-    }, this.snakeSpeed * 3);
+    // }, this.snakeSpeed * 3);
 };
 
 Snake.prototype.tail = function () {
@@ -109,6 +107,7 @@ Snake.prototype.moveRight = function () {
             this.dead();
             return;
         }
+        this.checkCollision(firstElementX + 2, firstElementY);
         tail.style.left = firstElementX + 2 + "%";
         tail.style.top = firstElementY + "%";
         this.snakeElements.pop();
@@ -127,6 +126,7 @@ Snake.prototype.moveLeft = function () {
             this.dead();
             return;
         }
+        this.checkCollision(firstElementX - 2, firstElementY);
         tail.style.left = firstElementX - 2 + "%";
         tail.style.top = firstElementY + "%";
         this.snakeElements.pop();
@@ -145,6 +145,7 @@ Snake.prototype.moveUp = function () {
             this.dead();
             return;
         }
+        this.checkCollision(firstElementX, firstElementY - 2);
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY - 2 + "%";
         this.snakeElements.pop();
@@ -164,6 +165,7 @@ Snake.prototype.moveDown = function () {
             this.dead();
             return;
         }
+        this.checkCollision(firstElementX, firstElementY + 2);
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY + 2 + "%";
         this.snakeElements.pop();
@@ -185,7 +187,27 @@ Snake.prototype.checkIfIsInsideBoard = function (leftPos, topPos) {
     return false;
 };
 
-Snake.prototype.dead = function (leftPos, topPos) {
+Snake.prototype.checkCollision = function (newLeftSankeHeadPos, newTopSnakeHeadPos) {
+    this.foodElements.forEach(function(foodElement, index, array){
+        console.log(newLeftSankeHeadPos, newTopSnakeHeadPos,  parseInt(foodElement.style.left.replace('%', '')), parseInt(foodElement.style.top.replace('%', '')));        
+        if (
+            newLeftSankeHeadPos === parseInt(foodElement.style.left.replace('%', ''))
+            &&
+            newTopSnakeHeadPos === parseInt(foodElement.style.top.replace('%', ''))
+        ){
+            console.log('SNAKE EATS');
+            foodElement.remove();
+            // @TIODO we must add an element to snake 
+            // new element shoud replace sanke's head
+            // new element shbould be in food element pos (that we removed)
+            // snake can NOT move in this movement step !!!!
+
+            // we must delete elemnt from array
+        }
+    });
+};
+
+Snake.prototype.dead = function (leftPos, newTopSnakeHeadPos) {
     clearInterval(this.autoMoveIntevalId);
     console.log('DEAD');
 };
