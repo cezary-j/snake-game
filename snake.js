@@ -6,14 +6,11 @@ function Snake() {
     this.snakeLength = 5;
     var snakeBody = 2;
     this.snakeElements = [];
+    this.foodElements = [];
     this.autoMoveIntevalId = null;
+    this.generateFoodIntevalId = null;
     this.direction = 'down';
-}
-
-Snake.prototype.autoMove = function () {
-    // this.autoMoveIntevalId = setInterval(function(){
-    //     moveRight();
-    // }, 1000);
+    this.snakeSpeed = 500;
 }
 
 Snake.prototype.begin = function () {
@@ -54,7 +51,47 @@ Snake.prototype.begin = function () {
         if (self.direction === 'down') {
             self.moveDown();
         }
-    }, 500);
+    }, this.snakeSpeed);
+
+    this.generateFoodIntevalId = setInterval(function () {
+        var leftFoodPos = Math.floor(Math.random() * 98);
+        var topFoodPos = Math.floor(Math.random() * 98);
+        // @TODO it must be even
+
+        var forbiddenPos = false;
+
+        // check if food can be here
+        self.snakeElements.forEach(function (snakeElement, index) {
+            console.log('Check if food willnot be in sake');
+            if (
+                leftFoodPos === parseInt(snakeElement.style.left.replace('%', ''))
+                &&
+                topFoodPos === parseInt(snakeElement.style.top.replace('%', ''))
+            ){
+                forbiddenPos = true;
+            }
+        });
+
+        // @TODO
+        // check if food new pos isnt in food old position
+        /// some code here
+
+        if(forbiddenPos){
+            return; // no food will be placed if poiton is forbidde
+            // @TODO it shoud random new postion again here
+        }
+
+        var div = document.createElement('div');
+        self.foodElements.push(div);
+        div.className = 'food';
+        var board = document.querySelector('.board');
+        div.style.top = topFoodPos + "%";
+        div.style.left = leftFoodPos + "%";
+        board.appendChild(div);
+
+        console.log(self.foodElements);
+
+    }, this.snakeSpeed * 3);
 };
 
 Snake.prototype.tail = function () {
@@ -68,7 +105,7 @@ Snake.prototype.moveRight = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementX + 2 != left.split('%')[0]) {
-        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+        if (this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)) {
             this.dead();
             return;
         }
@@ -86,7 +123,7 @@ Snake.prototype.moveLeft = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementX - 2 != left.split('%')[0]) {
-        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+        if (this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)) {
             this.dead();
             return;
         }
@@ -104,7 +141,7 @@ Snake.prototype.moveUp = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementY - 2 != top.split('%')[0]) {
-        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+        if (this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)) {
             this.dead();
             return;
         }
@@ -123,7 +160,7 @@ Snake.prototype.moveDown = function () {
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
     if (firstElementY + 2 != top.split('%')[0]) {
-        if(this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)){
+        if (this.checkIfIsInsideBoard(firstElementX + 2, firstElementY)) {
             this.dead();
             return;
         }
@@ -135,7 +172,6 @@ Snake.prototype.moveDown = function () {
 };
 
 Snake.prototype.checkIfIsInsideBoard = function (leftPos, topPos) {
-    console.log(leftPos, topPos);
     if (leftPos >= 100
         ||
         leftPos < 4
@@ -146,11 +182,10 @@ Snake.prototype.checkIfIsInsideBoard = function (leftPos, topPos) {
     ) {
         return true;
     }
-    return false; 
+    return false;
 };
 
 Snake.prototype.dead = function (leftPos, topPos) {
     clearInterval(this.autoMoveIntevalId);
     console.log('DEAD');
 };
-    
