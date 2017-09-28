@@ -7,15 +7,18 @@ function Snake() {
     var snakeBody = 2;
     this.snakeElements = [];
     this.autoMoveIntevalId = null;
+    this.direction = 'up';
 }
 
 Snake.prototype.autoMove = function () {
     // this.autoMoveIntevalId = setInterval(function(){
     //     moveRight();
     // }, 1000);
-}    
+}
 
 Snake.prototype.begin = function () {
+    var self = this;
+    
     for (var i = 0; i < this.snakeLength; i++) {
         var div = document.createElement('div');
         this.snakeElements.push(div);
@@ -23,13 +26,36 @@ Snake.prototype.begin = function () {
         var board = document.querySelector('.board');
         board.appendChild(div);
         div.style.top = 50 + "%";
-        div.style.left = 50 - [i] * 2 + "%";
+        div.style.left = 50 - [i] * 2 + "%"
     }
 
-    var self = this;
-    this.autoMoveIntevalId = window.setInterval(function(){
-        self.moveRight();
-    }, 1000);
+    document.addEventListener('keydown', function (event) {
+        if (event.code === "ArrowRight") {
+            self.direction = 'right';
+        } else if (event.code === "ArrowLeft") {
+            self.direction = 'left';
+        } else if (event.code === "ArrowUp") {
+            self.direction = 'up';
+        } else if (event.code === "ArrowDown") {
+            self.direction = 'down';
+        }
+    });
+
+    this.autoMoveIntevalId = setInterval(function () {
+        console.log(self.direction);
+        if (self.direction === 'right') {
+            self.moveRight();
+        }
+        if (self.direction === 'left') {
+            self.moveLeft();
+        }
+        if (self.direction === 'up') {
+            self.moveUp();
+        }
+        if (self.direction === 'down') {
+            self.moveDown();
+        }
+    }, 500);
 };
 
 Snake.prototype.tail = function () {
@@ -42,7 +68,6 @@ Snake.prototype.moveRight = function () {
 
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
-    console.log(firstElementX, firstElementY);
     if (firstElementX + 2 != left.split('%')[0]) {
         tail.style.left = firstElementX + 2 + "%";
         tail.style.top = firstElementY + "%";
@@ -52,12 +77,11 @@ Snake.prototype.moveRight = function () {
 };
 
 Snake.prototype.moveLeft = function () {
-    var left = this.snakeElements[1].style.left;    
+    var left = this.snakeElements[1].style.left;
     var tail = this.tail();
 
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
-    console.log(firstElementX, firstElementY);
     if (firstElementX - 2 != left.split('%')[0]) {
         tail.style.left = firstElementX - 2 + "%";
         tail.style.top = firstElementY + "%";
@@ -66,12 +90,11 @@ Snake.prototype.moveLeft = function () {
     }
 };
 Snake.prototype.moveUp = function () {
-    var top = this.snakeElements[1].style.top;    
+    var top = this.snakeElements[1].style.top;
     var tail = this.tail();
 
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
-    console.log(firstElementX, firstElementY);
     if (firstElementY - 2 != top.split('%')[0]) {
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY - 2 + "%";
@@ -86,7 +109,6 @@ Snake.prototype.moveDown = function () {
 
     var firstElementX = parseInt(this.snakeElements[0].style.left.replace('%', ''));
     var firstElementY = parseInt(this.snakeElements[0].style.top.replace('%', ''));
-    console.log(firstElementX, firstElementY);
     if (firstElementY + 2 != top.split('%')[0]) {
         tail.style.left = firstElementX + '%';
         tail.style.top = firstElementY + 2 + "%";
